@@ -5,6 +5,7 @@ import com.scheduler.dtos.JobResponseDTO;
 import com.scheduler.exceptions.EstablishmentNotFoundException;
 import com.scheduler.exceptions.JobNotFoundException;
 import com.scheduler.services.JobService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,13 +43,13 @@ public class JobController {
     }
 
     @PostMapping("/")
-    public ResponseEntity saveJob(@RequestBody JobRequestDTO jobRequestDTO){
+    public ResponseEntity saveJob(@RequestBody @Valid JobRequestDTO jobRequestDTO){
         List<JobResponseDTO> jobs = jobService.saveJob(jobRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(jobs);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateJob(@PathVariable(value = "id") Integer id, @RequestBody JobRequestDTO jobRequestDTO){
+    public ResponseEntity updateJob(@PathVariable(value = "id") Integer id, @RequestBody @Valid JobRequestDTO jobRequestDTO){
         try {
             JobResponseDTO updatedJob = jobService.updateJob(id, jobRequestDTO);
             return ResponseEntity.status(HttpStatus.OK).body(updatedJob);
