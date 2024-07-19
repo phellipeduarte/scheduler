@@ -47,7 +47,7 @@ public class JobService {
 
     public JobResponseDTO updateJob(Integer id, JobRequestDTO jobRequestDTO) {
         Job job = GetOrThrowNotFoundService.getJobOrThrowJobNotFound(id);
-        BeanUtils.copyProperties(jobRequestDTO, job);
+        BeanUtils.copyProperties(jobRequestDTO, job, "establishmentId");
         jobRepository.save(job);
         JobResponseDTO updatedJob = new JobResponseDTO(job);
         return updatedJob;

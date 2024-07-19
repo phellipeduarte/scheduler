@@ -43,7 +43,7 @@ public class AttendantService {
 
     public AttendantResponseDTO updateAttendant(UUID uuid, AttendantRequestDTO attendantRequestDTO) {
         Attendant attendant = GetOrThrowNotFoundService.getAttendantOrThrowAttendantNotFound(uuid);
-        BeanUtils.copyProperties(attendantRequestDTO, attendant);
+        BeanUtils.copyProperties(attendantRequestDTO, attendant, "establishmentId");
         attendantRepository.save(attendant);
         AttendantResponseDTO updatedAttendant = new AttendantResponseDTO(attendant);
         return updatedAttendant;
