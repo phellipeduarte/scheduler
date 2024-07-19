@@ -1,6 +1,5 @@
 package com.scheduler.services;
 
-import com.scheduler.dtos.ClientResponseDTO;
 import com.scheduler.dtos.JobRequestDTO;
 import com.scheduler.dtos.JobResponseDTO;
 import com.scheduler.exceptions.EstablishmentNotFoundException;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class JobService {
@@ -25,19 +23,22 @@ public class JobService {
     @Autowired
     JobRepository jobRepository;
 
+    @Autowired
+    GetOrThrowNotFoundService GetOrThrowNotFoundService;
+
     public List<JobResponseDTO> getJobs(Integer establishmentId) throws EstablishmentNotFoundException {
-        Establishment establishment = getEstablishmentOrThrowEstablishmentNotFound(establishmentId);
+        Establishment establishment = GetOrThrowNotFoundService.getEstablishmentOrThrowEstablishmentNotFound(establishmentId);
         List<JobResponseDTO> jobs = establishment.getJobs().stream().map(JobResponseDTO::new).toList();
         return jobs;
     }
 
     public JobResponseDTO getJob(Integer id) throws JobNotFoundException {
-        JobResponseDTO job = new JobResponseDTO(getJobOrThrowJobNotFound(id));
+        JobResponseDTO job = new JobResponseDTO(GetOrThrowNotFoundService.getJobOrThrowJobNotFound(id));
         return job;
     }
 
     public List<JobResponseDTO> saveJob(JobRequestDTO jobRequestDTO) throws EstablishmentNotFoundException {
-        Establishment establishment = getEstablishmentOrThrowEstablishmentNotFound(jobRequestDTO.establishmentId());
+        Establishment establishment = GetOrThrowNotFoundService.getEstablishmentOrThrowEstablishmentNotFound(jobRequestDTO.establishmentId());
         Job newJob = new Job(jobRequestDTO, establishment);
         jobRepository.save(newJob);
         List<JobResponseDTO> updatedJobs = establishment.getJobs().stream().map(JobResponseDTO::new).toList();
@@ -45,7 +46,7 @@ public class JobService {
     }
 
     public JobResponseDTO updateJob(Integer id, JobRequestDTO jobRequestDTO) {
-        Job job = getJobOrThrowJobNotFound(id);
+        Job job = GetOrThrowNotFoundService.getJobOrThrowJobNotFound(id);
         BeanUtils.copyProperties(jobRequestDTO, job);
         jobRepository.save(job);
         JobResponseDTO updatedJob = new JobResponseDTO(job);
@@ -53,23 +54,7 @@ public class JobService {
     }
 
     public void deleteJob(Integer id) {
-        Job job = getJobOrThrowJobNotFound(id);
+        Job job = GetOrThrowNotFoundService.getJobOrThrowJobNotFound(id);
         jobRepository.delete(job);
-    }
-
-    public Job getJobOrThrowJobNotFound(Integer jobId){
-        Optional<Job> jobOptional = jobRepository.findById(jobId);
-        if (jobOptional.isEmpty()){
-            throw new JobNotFoundException();
-        }
-        return jobOptional.get();
-    }
-
-    public Establishment getEstablishmentOrThrowEstablishmentNotFound(Integer establishmentId){
-        Optional<Establishment> establishmentOptional = establishmentRepository.findById(establishmentId);
-        if (establishmentOptional.isEmpty()){
-            throw new EstablishmentNotFoundException();
-        }
-        return establishmentOptional.get();
     }
 }

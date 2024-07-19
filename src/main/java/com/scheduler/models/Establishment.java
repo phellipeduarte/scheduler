@@ -23,6 +23,9 @@ public class Establishment {
     @OneToMany(mappedBy = "establishment")
     private List<Job> jobs;
 
+    @OneToMany(mappedBy = "establishment")
+    private List<Attendant> attendants;
+
     public Establishment(EstablishmentRequestDTO establishmentRequestDTO) {
         this.name = establishmentRequestDTO.name();
     }
