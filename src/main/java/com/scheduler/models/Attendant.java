@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Table
 @Entity
 @Getter
@@ -20,6 +22,9 @@ public class Attendant extends Person{
     @ManyToOne
     @JoinColumn(name = "establishment_id", nullable = false)
     private Establishment establishment;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<Appointment> appointments;
 
     public Attendant(AttendantRequestDTO attendantRequestDTO, Establishment establishment) {
         super(attendantRequestDTO.name());

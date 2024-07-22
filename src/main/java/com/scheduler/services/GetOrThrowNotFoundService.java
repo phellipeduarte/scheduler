@@ -1,14 +1,8 @@
 package com.scheduler.services;
 
-import com.scheduler.exceptions.AttendantNotFoundException;
-import com.scheduler.exceptions.EstablishmentNotFoundException;
-import com.scheduler.exceptions.JobNotFoundException;
-import com.scheduler.models.Attendant;
-import com.scheduler.models.Establishment;
-import com.scheduler.models.Job;
-import com.scheduler.repositories.AttendantRepository;
-import com.scheduler.repositories.EstablishmentRepository;
-import com.scheduler.repositories.JobRepository;
+import com.scheduler.exceptions.*;
+import com.scheduler.models.*;
+import com.scheduler.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +13,9 @@ import java.util.UUID;
 public class GetOrThrowNotFoundService {
 
     @Autowired
+    ClientRepository clientRepository;
+
+    @Autowired
     JobRepository jobRepository;
 
     @Autowired
@@ -26,6 +23,18 @@ public class GetOrThrowNotFoundService {
 
     @Autowired
     AttendantRepository attendantRepository;
+
+    @Autowired
+    AppointmentRepository appointmentRepository;
+
+
+    public Client getClientOrThrowClientNotFound(UUID clientId){
+        Optional<Client> clientOptional = clientRepository.findByUuid(clientId);
+        if (clientOptional.isEmpty()){
+            throw new ClientNotFoundException();
+        }
+        return clientOptional.get();
+    }
 
 
     public Job getJobOrThrowJobNotFound(Integer jobId){
@@ -50,5 +59,13 @@ public class GetOrThrowNotFoundService {
             throw new AttendantNotFoundException();
         }
         return attendantOptional.get();
+    }
+
+    public Appointment getAppointmentOrThrowAppointmentNotFound(UUID appointmentId){
+        Optional<Appointment> appointmentOptional = appointmentRepository.findByUuid(appointmentId);
+        if (appointmentOptional.isEmpty()){
+            throw new AppointmentNotFoundException();
+        }
+        return appointmentOptional.get();
     }
 }
