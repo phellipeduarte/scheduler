@@ -1,5 +1,6 @@
 package com.scheduler.controllers;
 
+import com.scheduler.dtos.AppointmentResponseDTO;
 import com.scheduler.dtos.AttendantRequestDTO;
 import com.scheduler.dtos.AttendantResponseDTO;
 import com.scheduler.exceptions.AttendantNotFoundException;
@@ -36,6 +37,16 @@ public class AttendantController {
         try {
             AttendantResponseDTO attendant = attendantService.getAttendant(uuid);
             return ResponseEntity.status(HttpStatus.OK).body(attendant);
+        } catch (AttendantNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+        }
+    }
+
+    @GetMapping("/{uuid}/appointments")
+    public ResponseEntity getAppointments(@PathVariable(value = "uuid") UUID uuid){
+        try {
+            List<AppointmentResponseDTO> appointments = attendantService.getAppointments(uuid);
+            return ResponseEntity.status(HttpStatus.OK).body(appointments);
         } catch (AttendantNotFoundException exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }

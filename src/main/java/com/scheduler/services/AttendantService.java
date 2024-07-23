@@ -1,5 +1,6 @@
 package com.scheduler.services;
 
+import com.scheduler.dtos.AppointmentResponseDTO;
 import com.scheduler.dtos.AttendantRequestDTO;
 import com.scheduler.dtos.AttendantResponseDTO;
 import com.scheduler.models.Attendant;
@@ -7,9 +8,9 @@ import com.scheduler.models.Establishment;
 import com.scheduler.repositories.AttendantRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,12 @@ public class AttendantService {
         Establishment establishment = GetOrThrowNotFoundService.getEstablishmentOrThrowEstablishmentNotFound(establishmentId);
         List<AttendantResponseDTO> attendants = establishment.getAttendants().stream().map(AttendantResponseDTO::new).toList();
         return attendants;
+    }
+
+    public List<AppointmentResponseDTO> getAppointments(UUID attendantId){
+        Attendant attendant = GetOrThrowNotFoundService.getAttendantOrThrowAttendantNotFound(attendantId);
+        List<AppointmentResponseDTO> appointments = attendant.getAppointments().stream().filter(appointment -> appointment.getStart().isAfter(LocalDateTime.now())).map(AppointmentResponseDTO::new).toList();
+        return appointments;
     }
 
     public AttendantResponseDTO getAttendant(UUID uuid) {
