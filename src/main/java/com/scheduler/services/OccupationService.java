@@ -34,11 +34,23 @@ public class OccupationService {
             if (!attendant.getUuid().equals(occupation.attendantId())){
                 throw new InvalidOccupationException();
             }
+            if(isOccupationExistent(attendant.getOccupations(), occupation)){
+                throw new InvalidOccupationException();
+            }
             Occupation newOccupation = new Occupation(occupation, attendant);
             occupationRepository.save(newOccupation);
         }
         List<OccupationResponseDTO> updatedOccupations = attendant.getOccupations().stream().map(OccupationResponseDTO::new).toList();
         return updatedOccupations;
+    }
+
+    public boolean isOccupationExistent(List<Occupation> attendantOccupations, OccupationRequestDTO newOccupation){
+        for (Occupation attendantOccupation : attendantOccupations){
+            if (attendantOccupation.getWeekDay().equals(newOccupation.weekDay())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public OccupationResponseDTO updateAttendantOccupation(OccupationRequestDTO occupationRequestDTO, Integer occupationId){

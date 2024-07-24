@@ -3,6 +3,7 @@ package com.scheduler.controllers;
 import com.scheduler.dtos.OccupationRequestDTO;
 import com.scheduler.dtos.OccupationResponseDTO;
 import com.scheduler.exceptions.AttendantNotFoundException;
+import com.scheduler.exceptions.InvalidOccupationException;
 import com.scheduler.exceptions.OccupationNotFoundException;
 import com.scheduler.services.OccupationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class OccupationController {
             List<OccupationResponseDTO> occupations = occupationService.saveAttendantOccupations(occupationsRequest);
             return ResponseEntity.status(HttpStatus.OK).body(occupations);
         } catch (AttendantNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+        } catch (InvalidOccupationException exception){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }
