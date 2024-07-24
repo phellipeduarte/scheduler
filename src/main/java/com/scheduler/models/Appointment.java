@@ -2,6 +2,7 @@ package com.scheduler.models;
 
 
 import com.scheduler.dtos.AppointmentRequestDTO;
+import com.scheduler.enums.AppointmentStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,8 @@ public class Appointment {
     @DateTimeFormat(pattern = "yyyy-MM-ddThh:MM")
     private LocalDateTime endTime;
 
+    private AppointmentStatusEnum appointmentStatus;
+
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
@@ -45,6 +48,15 @@ public class Appointment {
         this.endTime = this.start.plusMinutes(job.getDurationMinutes().longValue());
         this.client = client;
         this.attendant = attendant;
+        this.appointmentStatus = AppointmentStatusEnum.AGENDADO;
         this.job = job;
+    }
+
+    public void uncheck(){
+        this.appointmentStatus = AppointmentStatusEnum.DESMARCADO;
+    }
+
+    public void cancel(){
+        this.appointmentStatus = AppointmentStatusEnum.CANCELADO;
     }
 }

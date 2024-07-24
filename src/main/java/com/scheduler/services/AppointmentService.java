@@ -2,11 +2,11 @@ package com.scheduler.services;
 
 import com.scheduler.dtos.AppointmentRequestDTO;
 import com.scheduler.dtos.AppointmentResponseDTO;
+import com.scheduler.enums.AppointmentStatusEnum;
 import com.scheduler.exceptions.TimeNotAvailableException;
 import com.scheduler.models.*;
 import com.scheduler.repositories.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class AppointmentService {
         Client client = GetOrThrowNotFoundService.getClientOrThrowClientNotFound(appointmentRequestDTO.clientId());
         Attendant attendant = GetOrThrowNotFoundService.getAttendantOrThrowAttendantNotFound(appointmentRequestDTO.attendantId());
         Job job = GetOrThrowNotFoundService.getJobOrThrowJobNotFound(appointmentRequestDTO.jobId());
-        List<Appointment> appointmentList = attendant.getAppointments().stream().filter(appointment -> appointment.getStart().isAfter(LocalDateTime.now())).toList();
+        List<Appointment> appointmentList = attendant.getAppointments().stream().filter(appointment -> appointment.getStart().isAfter(LocalDateTime.now()) && appointment.getAppointmentStatus().equals(AppointmentStatusEnum.AGENDADO)).toList();
         Appointment appointment = new Appointment(appointmentRequestDTO, client, attendant, job);
 
         if (!appointment.getStart().isAfter(LocalDateTime.now())){
@@ -50,6 +50,20 @@ public class AppointmentService {
             throw new TimeNotAvailableException();
         }
 
+        appointmentRepository.save(appointment);
+        return new AppointmentResponseDTO(appointment);
+    }
+
+    public AppointmentResponseDTO uncheckAppointment(UUID appointmentId) {
+        Appointment appointment = GetOrThrowNotFoundService.getAppointmentOrThrowAppointmentNotFound(appointmentId);
+        appointment.uncheck();
+        appointmentRepository.save(appointment);
+        return new AppointmentResponseDTO(appointment);
+    }
+
+    public AppointmentResponseDTO cancelAppointment(UUID appointmentId) {
+        Appointment appointment = GetOrThrowNotFoundService.getAppointmentOrThrowAppointmentNotFound(appointmentId);
+        appointment.cancel();
         appointmentRepository.save(appointment);
         return new AppointmentResponseDTO(appointment);
     }

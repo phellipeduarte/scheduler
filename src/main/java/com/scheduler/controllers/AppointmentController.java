@@ -38,4 +38,24 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }
+
+    @PutMapping("/uncheck/{uuid}")
+    public ResponseEntity uncheckAppointment(@PathVariable(value = "uuid") UUID appointmentId){
+        try {
+            AppointmentResponseDTO appointment = appointmentService.uncheckAppointment(appointmentId);
+            return ResponseEntity.status(HttpStatus.OK).body(appointment);
+        } catch (AppointmentNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+        }
+    }
+
+    @PutMapping("/cancel/{uuid}")
+    public ResponseEntity cancelAppointment(@PathVariable(value = "uuid") UUID appointmentId){
+        try {
+            AppointmentResponseDTO appointment = appointmentService.cancelAppointment(appointmentId);
+            return ResponseEntity.status(HttpStatus.OK).body(appointment);
+        } catch (AppointmentNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+        }
+    }
 }
