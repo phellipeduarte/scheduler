@@ -26,6 +26,9 @@ public class Attendant extends Person{
     @OneToMany(mappedBy = "attendant")
     private List<Appointment> appointments;
 
+    @OneToMany(mappedBy = "attendant")
+    private List<Occupation> occupations;
+
     public Attendant(AttendantRequestDTO attendantRequestDTO, Establishment establishment) {
         super(attendantRequestDTO.name());
         this.title = attendantRequestDTO.title();

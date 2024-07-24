@@ -27,6 +27,9 @@ public class GetOrThrowNotFoundService {
     @Autowired
     AppointmentRepository appointmentRepository;
 
+    @Autowired
+    OccupationRepository occupationRepository;
+
 
     public Client getClientOrThrowClientNotFound(UUID clientId){
         Optional<Client> clientOptional = clientRepository.findByUuid(clientId);
@@ -67,5 +70,13 @@ public class GetOrThrowNotFoundService {
             throw new AppointmentNotFoundException();
         }
         return appointmentOptional.get();
+    }
+
+    public Occupation getOccupationOrThrowOccupationNotFound(Integer occupationId){
+        Optional<Occupation> occupationOptional = occupationRepository.findById(occupationId);
+        if(occupationOptional.isEmpty()){
+            throw new OccupationNotFoundException();
+        }
+        return occupationOptional.get();
     }
 }
