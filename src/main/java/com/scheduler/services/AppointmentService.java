@@ -3,15 +3,14 @@ package com.scheduler.services;
 import com.scheduler.dtos.AppointmentRequestDTO;
 import com.scheduler.dtos.AppointmentResponseDTO;
 import com.scheduler.exceptions.TimeNotAvailableException;
-import com.scheduler.models.Appointment;
-import com.scheduler.models.Attendant;
-import com.scheduler.models.Client;
-import com.scheduler.models.Job;
+import com.scheduler.models.*;
 import com.scheduler.repositories.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +38,14 @@ public class AppointmentService {
             throw new TimeNotAvailableException();
         }
 
+        if(!isAppointmentInBusinessOccupation(appointment.getStart().toLocalTime())){
+            throw new TimeNotAvailableException();
+        }
+
+        if(!isAppointmentInAttendantOccupation(attendant, appointment)){
+            throw new TimeNotAvailableException();
+        }
+
         if (!isAttendantAvailable(appointmentList, appointment)){
             throw new TimeNotAvailableException();
         }
@@ -60,5 +67,27 @@ public class AppointmentService {
             }
         }
         return true;
+    }
+
+    public Boolean isAppointmentInAttendantOccupation(Attendant attendant, Appointment appointment){
+        for(Occupation occupation : attendant.getOccupations()){
+            if (occupation.getWeekDay().equals(appointment.getStart().getDayOfWeek())){
+                if(!isTimeBetween(appointment.getStart().toLocalTime(), occupation.getStartTime(), occupation.getEndTime())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public Boolean isTimeBetween(LocalTime time, LocalTime start, LocalTime end){
+        if (time.isBefore(start) || time.isAfter(end)){
+            return false;
+        }
+        return true;
+    }
+
+    public Boolean isAppointmentInBusinessOccupation(LocalTime time){
+        return isTimeBetween(time, LocalTime.parse("07:00"), LocalTime.parse("22:00"));
     }
 }
