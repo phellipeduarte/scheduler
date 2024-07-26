@@ -9,7 +9,7 @@ RUN mvn clean install -DskipTests
 
 FROM amazoncorretto:17.0.8-alpine3.18
 
-COPY --from=build /app/target/products-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /app/target/scheduler-0.0.1-SNAPSHOT.jar /app/app.jar
 
 WORKDIR /app
 
