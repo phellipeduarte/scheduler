@@ -3,7 +3,6 @@ package com.scheduler.controllers;
 import com.scheduler.dtos.EstablishmentRequestDTO;
 import com.scheduler.dtos.EstablishmentResponseDTO;
 import com.scheduler.exceptions.EstablishmentNotFoundException;
-import com.scheduler.models.Establishment;
 import com.scheduler.services.EstablishmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class EstablishmentController {
     @GetMapping("/{id}")
     public ResponseEntity getEstablishment(@PathVariable(value = "id") Integer id){
         try {
-            Establishment establishment = establishmentService.getEstablishment(id);
+            EstablishmentResponseDTO establishment = establishmentService.getEstablishment(id);
             return ResponseEntity.status(HttpStatus.OK).body(establishment);
         } catch (EstablishmentNotFoundException exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());

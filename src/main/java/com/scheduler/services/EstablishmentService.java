@@ -23,13 +23,13 @@ public class EstablishmentService {
         return establishments;
     }
 
-    public Establishment getEstablishment(Integer id) throws EstablishmentNotFoundException {
+    public EstablishmentResponseDTO getEstablishment(Integer id) throws EstablishmentNotFoundException {
         Optional<Establishment> establishmentOptional = establishmentRepository.findById(id);
         if(establishmentOptional.isEmpty()){
             throw new EstablishmentNotFoundException();
         }
         Establishment establishment = establishmentOptional.get();
-        return establishment;
+        return new EstablishmentResponseDTO(establishment);
     }
 
     public Establishment saveEstablishment(EstablishmentRequestDTO establishmentRequestDTO){

@@ -30,7 +30,7 @@ public class ClientController {
     @GetMapping("/{uuid}")
     public ResponseEntity getClientByUuid(@PathVariable(value = "uuid") UUID uuid){
         try {
-            Client client = clientService.getClientByUuid(uuid);
+            ClientResponseDTO client = new ClientResponseDTO(clientService.getClientByUuid(uuid));
             return ResponseEntity.status(HttpStatus.OK).body(client);
         } catch (ClientNotFoundException exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado.");
@@ -40,7 +40,7 @@ public class ClientController {
     @GetMapping("/phone/{phone}")
     public ResponseEntity getClientByPhone(@PathVariable(value = "phone") String phone){
         try {
-            Client client = clientService.getClientByPhone(phone);
+            ClientResponseDTO client = new ClientResponseDTO(clientService.getClientByPhone(phone));
             return ResponseEntity.status(HttpStatus.OK).body(client);
         } catch (ClientNotFoundException exception){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado.");
